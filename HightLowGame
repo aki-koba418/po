@@ -1,0 +1,99 @@
+package portfolio;
+
+import java.util.Scanner;
+
+public class HightLowGame {
+    public static void main(String[] args) {
+        DeckOfCards deck = new DeckOfCards();
+        deck.shuffle();
+
+        Scanner scanner = new Scanner(System.in);
+        Card currentCard = deck.dealCard();
+        int score = 0;
+
+        while (true) {
+            System.out.println("現在のカード: " + currentCard);
+
+            System.out.print("次のカードは大きいですか？少ないですか？(h/H: 高い, l/L: 低い): ");
+            char choice = scanner.next().charAt(0);
+
+            Card nextCard = deck.dealCard();
+
+            System.out.println("次のカード: " + nextCard);
+
+            if ((choice == 'h' || choice == 'H') && nextCard.getValue() > currentCard.getValue()) {
+                System.out.println("正解！めくったカードは大きかったです！");
+                score++;
+            } else if ((choice == 'l' || choice == 'L') && nextCard.getValue() < currentCard.getValue()) {
+                System.out.println("正解！めくったカードは少なかったです！");
+                score++;
+            } else {
+                System.out.println("残念！不正解です。ゲームオーバーです。");
+                break;
+            }
+
+            currentCard = nextCard;
+        }
+
+        System.out.println("今回のスコア: " + score);
+        scanner.close();
+    }
+}
+
+class Card {
+    private final String[] suits = {"スペード", "ハート", "ダイヤ", "クラブ"};
+    private final String[] values = {"エース", "2", "3", "4", "5", "6", "7", "8", "9", "10", "ジャック", "クイーン", "キング"};
+
+    private final int suit;
+    private final int value;
+
+    public Card(int suit, int value) {
+        this.suit = suit;
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return values[value] + "の" + suits[suit];
+    }
+}
+
+class DeckOfCards {
+    private Card[] deck;
+    private int currentCard;
+    private static final int NUMBER_OF_CARDS = 52;
+    private static final java.util.Random randomNumbers = new java.util.Random();
+
+    public DeckOfCards() {
+        String[] suits = {"スペード", "ハート", "ダイヤ", "クラブ"};
+        deck = new Card[NUMBER_OF_CARDS];
+        currentCard = 0;
+
+        for (int count = 0; count < deck.length; count++) {
+            deck[count] = new Card(count % 4, count % 13);
+        }
+    }
+
+    public void shuffle() {
+        currentCard = 0;
+
+        for (int first = 0; first < deck.length; first++) {
+            int second = randomNumbers.nextInt(NUMBER_OF_CARDS);
+            Card temp = deck[first];
+            deck[first] = deck[second];
+            deck[second] = temp;
+        }
+    }
+
+    public Card dealCard() {
+        if (currentCard < deck.length) {
+            return deck[currentCard++];
+        } else {
+            return null;
+        }
+    }
+}
